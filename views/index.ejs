@@ -1,62 +1,28 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Biblioteca Musical</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f0f0;
-      padding: 20px;
-    }
-    h1, h2, h3 {
-      color: #333;
-    }
-    input, button, select {
-      padding: 5px;
-      margin: 5px;
-    }
-    iframe {
-      margin-top: 10px;
-    }
-  </style>
-</head>
-<body>
-  <h1>🎵 Biblioteca Musical</h1>
+const express = require('express');
+const bodyParser = require('body-parser');
+const yts = require('yt-search');
+const app = express();
+const port = process.env.PORT || 3000;
 
-  <form method="POST" action="/">
-    <input type="text" name="query" placeholder="Buscar canción..." required>
-    <button type="submit">Buscar</button>
-  </form>
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-  <h2>Resultados:</h2>
+app.get('/', (req, res) => {
+  res.render('index', { canciones: [] });
+});
 
-  <h3>🎼 Crear nueva playlist</h3>
-  <input type="text" id="playlist-nombre" placeholder="Nombre de la playlist">
-  <button id="crear-playlist">Crear</button>
+app.post('/', async (req, res) => {
+  const query = req.body.query;
+  const r = await yts(query);
+  const results = r.videos.slice(0, 5).map(video => ({
+    title: video.title,
+    channel: video.author.name,
+    id: video.videoId
+  }));
+  res.render('index', { canciones: results });
+});
 
-  <h3>🎵 Playlists disponibles</h3>
-  <select id="playlist-select">
-    <option value="">-- Selecciona una playlist --</option>
-  </select>
-
-  <% if (canciones.length > 0) { %>
-    <ul id="resultados">
-      <% canciones.forEach(c => { %>
-        <li data-id="<%= c.id %>">
-          <strong><%= c.title %></strong> - <%= c.channel %><br>
-          <iframe width="320" height="180" src="https://www.youtube.com/embed/<%= c.id %>" frameborder="0" allowfullscreen></iframe><br>
-          <button class="add-to-playlist" 
-                  data-id="<%= c.id %>" 
-                  data-title="<%= c.title %>" 
-                  data-channel="<%= c.channel %>">
-            ➕ Agregar a playlist
-          </button>
-        </li>
-      <% }) %>
-    </ul>
-  <% } %>
-
-  <script src="/script.js"></script>
-</body>
-</html>
+app.listen(port, () => {
+  console.log(Servidor funcionando en http://localhost:${port});
+});
