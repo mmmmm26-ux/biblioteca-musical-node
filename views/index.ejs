@@ -26,6 +26,9 @@
       <strong><%= c.title %></strong> - <%= c.channel %><br>
       <iframe width="320" height="180" src="https://www.youtube.com/embed/<%= c.id %>" frameborder="0" allowfullscreen></iframe><br>
       <button class="fav-btn">⭐ Agregar a favoritos</button>
+<select class="playlist-dropdown">
+  <option value="">➕ Agregar a playlist</option>
+</select>
     </li>
     <hr>
   <% }) %>
