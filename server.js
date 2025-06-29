@@ -24,5 +24,5 @@ app.post('/', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(Servidor funcionando en http://localhost:${port});
+  console.log(`Servidor funcionando en http://localhost:${port}`);
 });
