@@ -12,12 +12,19 @@
   </form>
   <h2>Resultados:</h2>
   <% if (canciones.length > 0) { %>
-    <ul>
-      <% canciones.forEach(c => { %>
-        <li><%= c.title %> - <%= c.channel %>
-        <a href="https://www.youtube.com/watch?v=<%= c.id %>" target="_blank">🎧</a></li>
-      <% }) %>
-    </ul>
+   <ul>
+  <% canciones.forEach(c => { %>
+    <li style="margin-bottom: 20px;">
+      <p><strong><%= c.title %></strong> - <em><%= c.channel %></em></p>
+      <iframe width="320" height="180"
+        src="https://www.youtube.com/embed/<%= c.id %>"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen>
+      </iframe>
+    </li>
+  <% }) %>
+</ul>
   <% } else { %>
     <p>No se encontraron resultados.</p>
   <% } %>
