@@ -11,6 +11,14 @@
     <button type="submit">Buscar</button>
   </form>
   <h2>Resultados:</h2>
+<h3>🎼 Crear nueva playlist</h3>
+<input type="text" id="playlist-nombre" placeholder="Nombre de la playlist">
+<button id="crear-playlist">Crear</button>
+
+<h3>🎵 Playlists disponibles</h3>
+<select id="playlist-select">
+  <option value="">-- Selecciona una playlist --</option>
+</select>
   <% if (canciones.length > 0) { %>
    <ul id="resultados">
   <% canciones.forEach(c => { %>
