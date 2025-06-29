@@ -12,19 +12,19 @@
   </form>
   <h2>Resultados:</h2>
   <% if (canciones.length > 0) { %>
-   <ul>
+   <ul id="resultados">
   <% canciones.forEach(c => { %>
-    <li style="margin-bottom: 20px;">
-      <p><strong><%= c.title %></strong> - <em><%= c.channel %></em></p>
-      <iframe width="320" height="180"
-        src="https://www.youtube.com/embed/<%= c.id %>"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowfullscreen>
-      </iframe>
+    <li data-id="<%= c.id %>">
+      <strong><%= c.title %></strong> - <%= c.channel %><br>
+      <iframe width="320" height="180" src="https://www.youtube.com/embed/<%= c.id %>" frameborder="0" allowfullscreen></iframe><br>
+      <button class="fav-btn">⭐ Agregar a favoritos</button>
     </li>
+    <hr>
   <% }) %>
 </ul>
+
+<h3>Tus favoritos:</h3>
+<ul id="favoritos"></ul>
   <% } else { %>
     <p>No se encontraron resultados.</p>
   <% } %>
