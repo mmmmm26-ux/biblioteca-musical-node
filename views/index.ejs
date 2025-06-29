@@ -18,18 +18,24 @@
 
   <h2>Resultados:</h2>
   <% if (canciones.length > 0) { %>
-    <ul>
-      <% canciones.forEach(c => { %>
-        <li>
-          <strong><%= c.title %></strong> - <%= c.channel %><br>
-          <iframe width="320" height="180"
-            src="https://www.youtube.com/embed/<%= c.id %>"
-            frameborder="0"
-            allowfullscreen>
-          </iframe>
+  <ul id="lista-videos">
+    <% canciones.forEach((c, i) => { %>
+        <li data-index="<%= i %>">
+            <strong><%= c.title %></strong> - <%= c.channel %><br>
+            <iframe 
+                class="video-player"
+                width="320" 
+                height="180" 
+                src="https://www.youtube.com/embed/<%= c.id %>?enablejsapi=1" 
+                frameborder="0"
+                allow="autoplay"
+                allowfullscreen>
+            </iframe>
         </li>
-      <% }) %>
-    </ul>
+    <% }) %>
+</ul>
+
+<script src="/script.js"></script>
   <% } else { %>
     <p>No hay resultados aún.</p>
   <% } %>
