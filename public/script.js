@@ -3,13 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const playlistSelect = document.getElementById("playlist-select");
   const playlistInput = document.getElementById("playlist-nombre");
   const crearPlaylistBtn = document.getElementById("crear-playlist");
+  const resultados = document.querySelectorAll("#resultados li");
 
   let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
   let playlists = JSON.parse(localStorage.getItem("playlists")) || {};
 
-  const results = document.querySelectorAll("#resultados li");
-
-  // Cargar playlists al dropdown
   function actualizarPlaylists() {
     playlistSelect.innerHTML = '<option value="">-- Selecciona una playlist --</option>';
     Object.keys(playlists).forEach(nombre => {
@@ -19,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
       playlistSelect.appendChild(option);
     });
 
-    // También rellenar los dropdowns en cada canción
     document.querySelectorAll(".playlist-dropdown").forEach(dropdown => {
       dropdown.innerHTML = '<option value="">➕ Agregar a playlist</option>';
       Object.keys(playlists).forEach(nombre => {
@@ -33,10 +30,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   actualizarPlaylists();
 
-  // Crear nueva playlist
   crearPlaylistBtn.addEventListener("click", () => {
     const nombre = playlistInput.value.trim();
-    if (!nombre || playlists[nombre]) return;
+    if (!nombre) {
+      alert("Poné un nombre para tu playlist.");
+      return;
+    }
+    if (playlists[nombre]) {
+      alert("Ya existe una playlist con ese nombre.");
+      return;
+    }
+
     playlists[nombre] = [];
     localStorage.setItem("playlists", JSON.stringify(playlists));
     playlistInput.value = "";
@@ -44,7 +48,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Agregar favoritos
-  resultados.querySelectorAll(".fav-btn").forEach(btn => {
+  document.querySelectorAll(".fav-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       const li = btn.closest("li");
       const id = li.getAttribute("data-id");
@@ -65,12 +69,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (nombre && !playlists[nombre].includes(id)) {
         playlists[nombre].push(id);
         localStorage.setItem("playlists", JSON.stringify(playlists));
-        alert("Agregado a playlist: " + nombre);
+        alert("✅ Agregado a playlist: " + nombre);
       }
     });
   });
 
-  // Mostrar favoritos al cargar
+  // Mostrar favoritos
   favoritos.forEach(id => mostrarFavorito(id));
 
   function mostrarFavorito(id) {
