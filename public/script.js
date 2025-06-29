@@ -1,92 +1,74 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const favList = document.getElementById("favoritos");
-  const playlistSelect = document.getElementById("playlist-select");
-  const playlistInput = document.getElementById("playlist-nombre");
-  const crearPlaylistBtn = document.getElementById("crear-playlist");
-  const resultados = document.querySelectorAll("#resultados li");
+  const createBtn = document.getElementById("crearPlaylistBtn");
+  const inputNombre = document.getElementById("nuevaPlaylist");
+  const selectPlaylist = document.getElementById("listaPlaylists");
+  const resultados = document.getElementById("resultados");
 
-  let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
-  let playlists = JSON.parse(localStorage.getItem("playlists")) || {};
+  const getPlaylists = () => {
+    const stored = localStorage.getItem("playlists");
+    return stored ? JSON.parse(stored) : {};
+  };
 
-  function actualizarPlaylists() {
-    playlistSelect.innerHTML = '<option value="">-- Selecciona una playlist --</option>';
-    Object.keys(playlists).forEach(nombre => {
-      const option = document.createElement("option");
-      option.value = nombre;
-      option.textContent = nombre;
-      playlistSelect.appendChild(option);
-    });
-
-    document.querySelectorAll(".playlist-dropdown").forEach(dropdown => {
-      dropdown.innerHTML = '<option value="">➕ Agregar a playlist</option>';
-      Object.keys(playlists).forEach(nombre => {
-        const opt = document.createElement("option");
-        opt.value = nombre;
-        opt.textContent = nombre;
-        dropdown.appendChild(opt);
-      });
-    });
-  }
-
-  actualizarPlaylists();
-
-  crearPlaylistBtn.addEventListener("click", () => {
-    const nombre = playlistInput.value.trim();
-    if (!nombre) {
-      alert("Poné un nombre para tu playlist.");
-      return;
-    }
-    if (playlists[nombre]) {
-      alert("Ya existe una playlist con ese nombre.");
-      return;
-    }
-
-    playlists[nombre] = [];
+  const setPlaylists = (playlists) => {
     localStorage.setItem("playlists", JSON.stringify(playlists));
-    playlistInput.value = "";
-    actualizarPlaylists();
-  });
+  };
 
-  // Agregar favoritos
-  document.querySelectorAll(".fav-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const li = btn.closest("li");
-      const id = li.getAttribute("data-id");
-      if (!favoritos.includes(id)) {
-        favoritos.push(id);
-        localStorage.setItem("favoritos", JSON.stringify(favoritos));
-        mostrarFavorito(id);
-      }
+  const actualizarSelector = () => {
+    const playlists = getPlaylists();
+    selectPlaylist.innerHTML = <option>-- Selecciona una playlist --</option>;
+    Object.keys(playlists).forEach((name) => {
+      const opt = document.createElement("option");
+      opt.value = name;
+      opt.textContent = name;
+      selectPlaylist.appendChild(opt);
     });
+  };
+
+  createBtn.addEventListener("click", () => {
+    const nombre = inputNombre.value.trim();
+    if (!nombre) return alert("Escribe un nombre de playlist");
+    const playlists = getPlaylists();
+    if (playlists[nombre]) return alert("Ya existe esa playlist");
+    playlists[nombre] = [];
+    setPlaylists(playlists);
+    inputNombre.value = "";
+    actualizarSelector();
   });
 
-  // Agregar a playlist
-  resultados.forEach(li => {
-    const dropdown = li.querySelector(".playlist-dropdown");
-    dropdown.addEventListener("change", () => {
-      const id = li.getAttribute("data-id");
-      const nombre = dropdown.value;
-      if (nombre && !playlists[nombre].includes(id)) {
-        playlists[nombre].push(id);
-        localStorage.setItem("playlists", JSON.stringify(playlists));
-        alert("✅ Agregado a playlist: " + nombre);
-      }
-    });
+  selectPlaylist.addEventListener("change", () => {
+    const nombre = selectPlaylist.value;
+    const playlists = getPlaylists();
+    const lista = playlists[nombre] || [];
+    resultados.innerHTML = <h3>${nombre}</h3>;
+    if (lista.length === 0) {
+      resultados.innerHTML += "<p>Sin canciones.</p>";
+    } else {
+      const ul = document.createElement("ul");
+      lista.forEach((cancion) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<b>${cancion.title}</b> - ${cancion.channel}
+          <br><audio controls src="https://www.youtube.com/watch?v=${cancion.id}"></audio>`;
+        ul.appendChild(li);
+      });
+      resultados.appendChild(ul);
+    }
   });
 
-  // Mostrar favoritos
-  favoritos.forEach(id => mostrarFavorito(id));
+  // Agregar botón para guardar a playlist desde resultados
+  resultados.addEventListener("click", (e) => {
+    if (e.target.classList.contains("add-to-playlist")) {
+      const id = e.target.dataset.id;
+      const title = e.target.dataset.title;
+      const channel = e.target.dataset.channel;
+      const nombre = selectPlaylist.value;
+      if (!nombre || nombre === "-- Selecciona una playlist --")
+        return alert("Selecciona una playlist");
+      const playlists = getPlaylists();
+      playlists[nombre].push({ title, channel, id });
+      setPlaylists(playlists);
+      alert("Agregada a playlist");
+    }
+  });
 
-  function mostrarFavorito(id) {
-    const iframe = document.createElement("iframe");
-    iframe.src = https://www.youtube.com/embed/${id};
-    iframe.width = 250;
-    iframe.height = 140;
-    iframe.setAttribute("allowfullscreen", true);
-    iframe.style.border = "none";
-
-    const li = document.createElement("li");
-    li.appendChild(iframe);
-    favList.appendChild(li);
-  }
+  actualizarSelector();
 });
