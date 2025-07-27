@@ -1,32 +1,38 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const yts = require('yt-search');
-const path = require('path');
+const express = require("express");
+const ytSearch = require("yt-search");
 
 const app = express();
-const port = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3000;
 
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Configurar Express
+app.use(express.static("public"));
+app.set("view engine", "ejs");
 
-app.use(express.static('public'));
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get('/', (req, res) => {
-  res.render('index', { canciones: [] });
+// Página principal
+app.get("/", (req, res) => {
+  res.render("index");
 });
 
-app.post('/', async (req, res) => {
-  const query = req.body.query;
-  const r = await yts(query);
-  const results = r.videos.slice(0, 5).map(video => ({
-    title: video.title,
-    channel: video.author.name,
-    id: video.videoId
-  }));
-  res.render('index', { canciones: results });
+// API de búsqueda
+app.get("/search", async (req, res) => {
+  try {
+    const query = req.query.q;
+    if (!query) return res.status(400).json({ error: "Falta la consulta" });
+
+    const result = await ytSearch(query);
+    const songs = result.videos.slice(0, 10).map(video => ({
+      title: video.title,
+      url: video.url
+    }));
+
+    res.json(songs);
+  } catch (err) {
+    console.error("Error en /search:", err);
+    res.status(500).json({ error: "Error al buscar canciones" });
+  }
 });
 
-app.listen(port, () => {
-  console.log(`Servidor funcionando en http://localhost:${port}`);
+// Iniciar servidor
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en http://localhost:${PORT}`);
 });
