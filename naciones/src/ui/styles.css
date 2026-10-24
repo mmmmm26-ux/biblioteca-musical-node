@@ -28,7 +28,7 @@
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #0f1420;
     --surface: #171e2e;
     --surface-2: #1c2436;
@@ -55,8 +55,35 @@
     color-scheme: dark;
   }
 }
+:root[data-theme="dark"] {
+    --bg: #0f1420;
+    --surface: #171e2e;
+    --surface-2: #1c2436;
+    --ink: #e8ebf2;
+    --muted: #a3acbd;
+    --line: #2b3550;
+    --navy: #0b1222;
+    --navy-2: #24365e;
+    --gold: #d4af5a;
+    --legal: #8db0f0;
+    --legal-bg: #1d2a47;
+    --data: #6fd3a2;
+    --data-bg: #15332a;
+    --sim: #f0b75e;
+    --sim-bg: #3a2a12;
+    --danger: #ff8a7a;
+    --danger-bg: #3d1915;
+    --ok: #74d39a;
+    --ok-bg: #143323;
+    --warn: #f2c14e;
+    --warn-bg: #3a2f10;
+    --focus: #8db0f0;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; }
+body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--navy); }
 body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; -webkit-text-size-adjust: 100%; }
 h1, h2, h3 { font-family: var(--serif); line-height: 1.2; margin: 0 0 0.5rem; }
 h1 { font-size: 1.7rem; }
@@ -78,7 +105,7 @@ button { font: inherit; }
 
 /* estructura */
 .app { min-height: 100dvh; display: flex; flex-direction: column; }
-.topbar { position: sticky; top: 0; z-index: 20; background: var(--navy); color: #fff; padding: 10px 16px calc(10px); display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--navy); color: #fff; padding: 10px 16px calc(10px); display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 8px rgba(0,0,0,.15); }
 .topbar .title { font-family: var(--serif); font-size: 1.05rem; line-height: 1.15; }
 .topbar .sub { font-size: 0.78rem; opacity: 0.85; }
 .topbar .grow { flex: 1; min-width: 0; }
